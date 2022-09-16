@@ -7,7 +7,7 @@ using ThreeDashTools.Patches;
 namespace ThreeDashTools;
 
 [BepInPlugin("mod.cgytrus.plugins.3dashtools", PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-[BepInDependency("mod.cgytrus.plugins.sixdash", "0.1.0")]
+[BepInDependency("mod.cgytrus.plugins.sixdash", "0.2.0")]
 public class Plugin : BaseUnityPlugin {
     public static Plugin? instance { get; private set; }
 

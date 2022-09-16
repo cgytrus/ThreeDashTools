@@ -21,17 +21,26 @@ public class AutoMusicSync : IPatch {
     private float _unsyncThreshold;
     private bool _debug;
 
+    private static float musicTime {
+        get => Player.music ? Player.music!.time - Player.musicOffset : 0f;
+        set {
+            if(!Player.music)
+                return;
+            Player.music!.time = value + Player.musicOffset;
+        }
+    }
+
+    private static float playerTime => World.DistanceToTime(PathFollower.distanceTravelled);
+
     private static float _levelStartTime;
     private static float levelTime {
         get => Time.time - _levelStartTime;
         set => _levelStartTime = Time.time - value;
     }
 
-    private static float playerTime => World.DistanceToTime(PathFollower.distanceTravelled);
-
     private float baseTime => _mode switch {
         Mode.None => 0f,
-        Mode.SyncToMusicTime => Player.music && Player.music!.isPlaying ? Player.music.time : 0f,
+        Mode.SyncToMusicTime => musicTime,
         Mode.SyncToPlayerPosition => playerTime,
         Mode.SyncToLevelTime => levelTime,
         _ => throw new ArgumentOutOfRangeException()
@@ -82,8 +91,7 @@ public class AutoMusicSync : IPatch {
         DrawDebugLine(PathFollower.distanceTravelled, Color.green);
         DrawDebugLine(World.TimeToDistance(levelTime), Color.red);
         if(Player.music)
-            DrawDebugLine(World.TimeToDistance(Player.music!.timeSamples / (float)Player.music.clip.frequency),
-                Color.blue, !Player.music.isPlaying);
+            DrawDebugLine(World.TimeToDistance(musicTime), Color.blue, !Player.music!.isPlaying);
 
         void DrawDebugLine(float distance, Color color, bool dashed = false) {
             Vector3 point = path.GetPointAtDistance(distance, endOfPath);
@@ -117,8 +125,8 @@ public class AutoMusicSync : IPatch {
 
     private void ForceSyncAll(PathFollower? pathFollower) {
         float baseTime = this.baseTime;
-        if(_mode != Mode.SyncToMusicTime && Player.music && Player.music!.isPlaying)
-            Player.music.time = baseTime;
+        if(_mode != Mode.SyncToMusicTime)
+            musicTime = baseTime;
         if(_mode != Mode.SyncToPlayerPosition)
             SetPlayerTime(pathFollower, baseTime);
         if(_mode != Mode.SyncToLevelTime)
@@ -128,9 +136,9 @@ public class AutoMusicSync : IPatch {
     private void SyncMusicIfNeeded(float baseTime) {
         if(_mode == Mode.SyncToMusicTime || Player.music == null || !Player.music.isPlaying)
             return;
-        float unsync = Mathf.Abs(Player.music.time - baseTime);
+        float unsync = Mathf.Abs(musicTime - baseTime);
         if(unsync >= _unsyncThreshold)
-            Player.music.time = baseTime;
+            musicTime = baseTime;
     }
 
     private bool SyncPlayerIfNeeded(float baseTime, PathFollower? pathFollower) {
