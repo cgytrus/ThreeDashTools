@@ -39,7 +39,7 @@ public class AutoMusicSync : IPatch {
     }
 
     private float baseTime => _mode switch {
-        Mode.None => 0f,
+        Mode.None => playerTime,
         Mode.SyncToMusicTime => musicTime,
         Mode.SyncToPlayerPosition => playerTime,
         Mode.SyncToLevelTime => levelTime,
@@ -127,7 +127,7 @@ public class AutoMusicSync : IPatch {
         float baseTime = this.baseTime;
         if(_mode != Mode.SyncToMusicTime)
             musicTime = baseTime;
-        if(_mode != Mode.SyncToPlayerPosition)
+        if(_mode != Mode.SyncToPlayerPosition && _mode != Mode.None)
             SetPlayerTime(pathFollower, baseTime);
         if(_mode != Mode.SyncToLevelTime)
             levelTime = baseTime;
