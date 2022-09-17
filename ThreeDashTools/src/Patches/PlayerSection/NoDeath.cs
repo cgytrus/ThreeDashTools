@@ -1,7 +1,6 @@
-﻿using SixDash.API;
-using SixDash.Patches;
+﻿using SixDash.Patches;
 
-namespace ThreeDashTools.Patches;
+namespace ThreeDashTools.Patches.PlayerSection;
 
 // ReSharper disable once UnusedType.Global
 public class NoDeath : ConfigurablePatch {
@@ -18,10 +17,10 @@ public class NoDeath : ConfigurablePatch {
         }
     }
 
-    public NoDeath() : base(Plugin.instance!.Config, "Player", null, false, "") { }
+    public NoDeath() : base(Plugin.instance!.Config, nameof(NoDeath), null, false, "") { }
 
     public override void Apply() {
-        Player.playerSpawn += self => {
+        SixDash.API.Player.playerSpawn += self => {
             _lastPlayer = self;
             _defaultNoDeath = self.noDeath;
             if(!enabled)

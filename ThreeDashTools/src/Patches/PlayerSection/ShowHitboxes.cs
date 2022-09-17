@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using HarmonyLib;
-
-using MonoMod.RuntimeDetour;
+﻿using System.Collections.Generic;
 
 using SixDash.API;
 using SixDash.Patches;
@@ -12,11 +7,11 @@ using UnityEngine;
 
 using Gizmos = Popcron.Gizmos;
 
-namespace ThreeDashTools.Patches;
+namespace ThreeDashTools.Patches.PlayerSection;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ShowHitboxes : ConfigurablePatch {
-    public ShowHitboxes() : base(Plugin.instance!.Config, "Player", null, false, "") => instance = this;
+    public ShowHitboxes() : base(Plugin.instance!.Config, "Player", nameof(ShowHitboxes), false, "") => instance = this;
 
     internal static ShowHitboxes? instance { get; private set; }
 

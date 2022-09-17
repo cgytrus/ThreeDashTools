@@ -1,4 +1,7 @@
-﻿/// <summary>
+﻿#nullable disable
+// ReSharper disable all
+
+/// <summary>
 /// Class that specifies how a setting should be displayed inside the ConfigurationManager settings window.
 ///
 /// Usage:

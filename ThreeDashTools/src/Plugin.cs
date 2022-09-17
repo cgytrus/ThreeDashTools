@@ -2,7 +2,7 @@
 
 using SixDash;
 
-using ThreeDashTools.Patches;
+using ThreeDashTools.Patches.PlayerSection;
 
 namespace ThreeDashTools;
 

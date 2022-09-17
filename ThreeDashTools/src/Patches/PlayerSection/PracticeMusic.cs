@@ -1,13 +1,12 @@
-﻿using SixDash.API;
-using SixDash.Patches;
+﻿using SixDash.Patches;
 
 using UnityEngine;
 
-namespace ThreeDashTools.Patches;
+namespace ThreeDashTools.Patches.PlayerSection;
 
 // ReSharper disable once UnusedType.Global
 public class PracticeMusic : ConfigurablePatch {
-    public PracticeMusic() : base(Plugin.instance!.Config, "Player", null, false,
+    public PracticeMusic() : base(Plugin.instance!.Config, "Player", nameof(PracticeMusic), false,
         "Plays level music in practice mode") { }
 
     public override void Apply() {
@@ -22,7 +21,7 @@ public class PracticeMusic : ConfigurablePatch {
         On.PauseMenuManager.StopAllMusic += (orig, self) => { if(!enabled) orig(self); };
         On.PauseMenuManager.Resume += (orig, self, resumeMusic) => orig(self, enabled || resumeMusic);
 
-        Player.playerSpawn += _ => {
+        SixDash.API.Player.playerSpawn += _ => {
             if(!enabled)
                 return;
             GameObject? recentCheckpoint = PauseMenuManager.inPracticeMode ? PlayerScript.GetRecentCheckpoint() : null;

@@ -5,7 +5,7 @@ using SixDash.Patches;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace ThreeDashTools.Patches;
+namespace ThreeDashTools.Patches.PlayerSection;
 
 // ReSharper disable once UnusedType.Global
 public class FirstPerson : ConfigurablePatch {
@@ -13,7 +13,7 @@ public class FirstPerson : ConfigurablePatch {
     private PlayerScript? _player;
     private PathFollower? _pathFollower;
 
-    public FirstPerson() : base(Plugin.instance!.Config, "Player", null, false, "") { }
+    public FirstPerson() : base(Plugin.instance!.Config, "Player", nameof(FirstPerson), false, "") { }
 
     public override void Apply() {
         On.CameraRaiser.Start += (orig, self) => {

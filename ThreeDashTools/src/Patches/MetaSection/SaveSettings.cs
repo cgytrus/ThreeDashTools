@@ -2,11 +2,11 @@
 
 using UnityEngine;
 
-namespace ThreeDashTools.Patches;
+namespace ThreeDashTools.Patches.MetaSection;
 
 // ReSharper disable once UnusedType.Global
 public class SaveSettings : ConfigurablePatch {
-    public SaveSettings() : base(Plugin.instance!.Config, "Meta", null, false,
+    public SaveSettings() : base(Plugin.instance!.Config, "Meta", nameof(SaveSettings), false,
         "Saves settings set in the pause menu") { }
 
     public override void Apply() {
