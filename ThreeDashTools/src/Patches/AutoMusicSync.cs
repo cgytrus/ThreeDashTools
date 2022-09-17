@@ -22,11 +22,11 @@ public class AutoMusicSync : IPatch {
     private bool _debug;
 
     private static float musicTime {
-        get => Player.music ? Player.music!.time - Player.musicOffset : 0f;
+        get => Music.music ? Music.music!.time - Music.offset : 0f;
         set {
-            if(!Player.music)
+            if(!Music.music)
                 return;
-            Player.music!.time = value + Player.musicOffset;
+            Music.music!.time = value + Music.offset;
         }
     }
 
@@ -90,8 +90,8 @@ public class AutoMusicSync : IPatch {
     private static void DrawDebug(VertexPath path, EndOfPathInstruction endOfPath) {
         DrawDebugLine(PathFollower.distanceTravelled, Color.green);
         DrawDebugLine(World.TimeToDistance(levelTime), Color.red);
-        if(Player.music)
-            DrawDebugLine(World.TimeToDistance(musicTime), Color.blue, !Player.music!.isPlaying);
+        if(Music.music)
+            DrawDebugLine(World.TimeToDistance(musicTime), Color.blue, !Music.music!.isPlaying);
 
         void DrawDebugLine(float distance, Color color, bool dashed = false) {
             Vector3 point = path.GetPointAtDistance(distance, endOfPath);
@@ -102,7 +102,7 @@ public class AutoMusicSync : IPatch {
 
     private bool SyncAll(PathFollower pathFollower) {
         bool syncedPlayer = false;
-        if(!Player.music || !Player.music!.isPlaying)
+        if(!Music.music || !Music.music!.isPlaying)
             return syncedPlayer;
         float baseTime = this.baseTime;
 
@@ -134,7 +134,7 @@ public class AutoMusicSync : IPatch {
     }
 
     private void SyncMusicIfNeeded(float baseTime) {
-        if(_mode == Mode.SyncToMusicTime || Player.music == null || !Player.music.isPlaying)
+        if(_mode == Mode.SyncToMusicTime || Music.music == null || !Music.music.isPlaying)
             return;
         float unsync = Mathf.Abs(musicTime - baseTime);
         if(unsync >= _unsyncThreshold)
