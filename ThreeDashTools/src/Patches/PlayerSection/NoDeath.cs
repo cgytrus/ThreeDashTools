@@ -1,4 +1,5 @@
-﻿using SixDash.Patches;
+﻿using SixDash.API;
+using SixDash.Patches;
 
 namespace ThreeDashTools.Patches.PlayerSection;
 
@@ -17,10 +18,10 @@ public class NoDeath : ConfigurablePatch {
         }
     }
 
-    public NoDeath() : base(Plugin.instance!.Config, nameof(NoDeath), null, false, "") { }
+    public NoDeath() : base(Plugin.instance!.Config, "Player", nameof(NoDeath), false, "") { }
 
     public override void Apply() {
-        SixDash.API.Player.playerSpawn += self => {
+        Player.playerSpawn += self => {
             _lastPlayer = self;
             _defaultNoDeath = self.noDeath;
             if(!enabled)
