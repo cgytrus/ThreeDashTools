@@ -24,7 +24,7 @@ public class PulsingOrbs : ConfigurablePatch {
             RegisterPulsingOrbs();
         };
 
-        World.levelUpdate += () => {
+        World.levelUpdate += (_, _) => {
             foreach(Chunk chunk in World.levelChunks.Values) {
                 if(!chunk.active)
                     continue;
