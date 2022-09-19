@@ -45,10 +45,10 @@ public class FirstPerson : ConfigurablePatch {
                 return;
             _player = _block!.GetComponent<PlayerScript>();
             DisableGraphicsObj(_player.shapes[0]); // cube
-            DisableGraphicsTrans(_player.shapes[1].transform.Find("CubeOnShip")); // ship
+            DisableGraphicsTrans(_player.shapes[1].transform.GetChild(1)); // ship
             DisableGraphicsObj(_player.shapes[2]); // wave
             DisableGraphicsObj(_player.shapes[3]); // hedron
-            DisableGraphicsTrans(_player.shapes[4].transform.Find("CubeOnShip")); // ufo
+            DisableGraphicsTrans(_player.shapes[4].transform.GetChild(0)); // ufo
 
             // reverse ufo dome triangles so that the dome renders on the inside instead of the outside
             Mesh ufoDome = _player.shapes[4].transform.Find("UFO").Find("Sphere.002").GetComponent<MeshFilter>().mesh;

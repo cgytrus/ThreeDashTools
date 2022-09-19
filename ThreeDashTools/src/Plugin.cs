@@ -2,6 +2,7 @@
 
 using SixDash;
 
+using ThreeDashTools.Patches;
 using ThreeDashTools.Patches.PlayerSection;
 
 namespace ThreeDashTools;
@@ -13,7 +14,13 @@ public class Plugin : BaseUnityPlugin {
 
     public Plugin() => instance = this;
 
-    private void Awake() => Util.ApplyAllPatches();
+    private void Awake() {
+        Logger.LogInfo("Loading icon assets");
+        Icon.LoadAssets();
+
+        Logger.LogInfo("Applying patches");
+        Util.ApplyAllPatches();
+    }
 
     private void Update() => ShowHitboxes.instance?.Update();
 }
