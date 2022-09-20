@@ -14,9 +14,6 @@ namespace ThreeDashTools.Patches.PlayerSection;
 
 [UsedImplicitly]
 public class ShowAttemptCount : ConfigurablePatch {
-    private TMP_FontAsset? _fontAsset;
-    private Material? _fontMaterial;
-
     private readonly List<(TMP_Text, Transform)> _texts = new();
     private int _attemptCount;
     private float _distance;
@@ -25,9 +22,6 @@ public class ShowAttemptCount : ConfigurablePatch {
     public ShowAttemptCount() : base(Plugin.instance!.Config, "Player", nameof(ShowAttemptCount), false, "") { }
 
     public override void Apply() {
-        _fontAsset = Util.FindResourceOfTypeWithName<TMP_FontAsset>("league-spartan.bold SDF");
-        _fontMaterial = Util.FindResourceOfTypeWithName<Material>("league-spartan.bold Atlas Material");
-
         World.levelLoading += () => {
             _texts.Clear();
             _attemptCount = 0;
@@ -83,11 +77,11 @@ public class ShowAttemptCount : ConfigurablePatch {
         text.overflowMode = TextOverflowModes.Overflow;
         text.alignment = TextAlignmentOptions.Center;
         text.fontSize = 12;
-        text.font = _fontAsset;
-        text.fontSharedMaterial = _fontMaterial;
-        text.fontStyle = FontStyles.Bold;
+        text.font = UI.fontAsset;
+        text.fontSharedMaterial = UI.fontMaterial;
+        text.fontStyle = UI.FontStyle;
         text.outlineColor = new Color32(0, 0, 0, 255);
-        text.outlineWidth = 0.3f;
+        text.outlineWidth = UI.FontOutlineWidth;
         text.enableCulling = true;
 
         return (text, obj.transform);

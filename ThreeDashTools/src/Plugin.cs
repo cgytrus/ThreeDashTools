@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 
 using SixDash;
+using SixDash.API;
 
 using ThreeDashTools.Patches;
 using ThreeDashTools.Patches.PlayerSection;
@@ -20,6 +21,9 @@ public class Plugin : BaseUnityPlugin {
 
         Logger.LogInfo("Applying patches");
         Util.ApplyAllPatches();
+
+        Logger.LogInfo("Initializing UI");
+        UI.AddVersionText($"3DashTools v{PluginInfo.PLUGIN_VERSION}");
     }
 
     private void Update() => ShowHitboxes.instance?.Update();
