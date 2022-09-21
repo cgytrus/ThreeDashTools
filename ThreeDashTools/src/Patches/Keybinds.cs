@@ -17,11 +17,13 @@ namespace ThreeDashTools.Patches;
 public class Keybinds : IPatch {
     private ConfigEntry<KeyboardShortcut> _placeCheckpoint;
     private ConfigEntry<KeyboardShortcut> _removeCheckpoint;
+    private ConfigEntry<KeyboardShortcut> _respawn;
 
     public Keybinds() {
         ConfigFile config = Plugin.instance!.Config;
         _placeCheckpoint = config.Bind("Keybinds", "PlaceCheckpoint", new KeyboardShortcut(KeyCode.Z), "");
         _removeCheckpoint = config.Bind("Keybinds", "RemoveCheckpoint", new KeyboardShortcut(KeyCode.X), "");
+        _respawn = config.Bind("Keybinds", "Respawn", new KeyboardShortcut(KeyCode.Backspace), "");
     }
 
     public void Apply() {
@@ -37,6 +39,13 @@ public class Keybinds : IPatch {
             cursor.GotoNext(code => code.MatchLdcI4((sbyte)KeyCode.X));
             cursor.RemoveRange(2);
             EmitIsDown(cursor, nameof(_removeCheckpoint));
+        };
+
+        IL.PlayerScript.Update += il => {
+            ILCursor cursor = new(il);
+            cursor.GotoNext(code => code.MatchLdcI4((sbyte)KeyCode.Backspace));
+            cursor.RemoveRange(2);
+            EmitIsDown(cursor, nameof(_respawn));
         };
     }
 
