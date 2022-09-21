@@ -21,6 +21,91 @@ public class Icon : ConfigurablePatch {
     private static readonly string iconsPath = Path.Combine(Application.streamingAssetsPath, "Icons");
     private static readonly Dictionary<string, GameObject> iconPrefabs = new();
 
+    private readonly struct IconColor {
+        public object boxedColor { get; }
+        public Texture2D texture { get; }
+        public Texture2D selectedTexture { get; }
+
+        public IconColor(Color color) {
+            boxedColor = color;
+            texture = CreateTexture(color, false);
+            selectedTexture = CreateTexture(color, true);
+        }
+
+        public IconColor(int color) : this(new Color(GetColorValue(color, 2), GetColorValue(color, 1),
+            GetColorValue(color, 0), 1f)) { }
+
+        private static Texture2D CreateTexture(Color color, bool outline) {
+            const int outlineWidth = 2;
+            // https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
+            // only done once for each color during static initialization so we can afford the expensive calculations
+            Color outlineColor =
+                outline && Mathf.Sqrt(0.299f * color.r * color.r + 0.587f * color.g * color.g +
+                    0.114f * color.b * color.b) < 0.5f ? Color.white : Color.black;
+
+            Texture2D texture = new(15, 15, TextureFormat.ARGB32, false);
+            int outlineRight = texture.width - outlineWidth;
+            int outlineBottom = texture.height - outlineWidth;
+            for(int x = 0; x < texture.width; x++)
+                for(int y = 0; y < texture.height; y++)
+                    texture.SetPixel(x, y,
+                        outline && (x < outlineWidth || y < outlineWidth || x >= outlineRight || y >= outlineBottom) ?
+                            outlineColor : color);
+            texture.Apply(false);
+            return texture;
+        }
+
+        private static float GetColorValue(int number, int index) =>
+            ((number >> index * 8) & byte.MaxValue) / (float)byte.MaxValue;
+    }
+
+    private static readonly List<IconColor> iconColors = new() {
+        new IconColor(0x7DFF00),
+        new IconColor(0x00FF00),
+        new IconColor(0x00FF7D),
+        new IconColor(0x00FFFF),
+        new IconColor(0x00C8FF),
+        new IconColor(0x007DFF),
+        new IconColor(0x0000FF),
+        new IconColor(0x7D00FF),
+        new IconColor(0xB900FF),
+        new IconColor(0xFF00FF),
+        new IconColor(0xFF007D),
+        new IconColor(0xFF0000),
+        new IconColor(0xFF4B00),
+        new IconColor(0xFF7D00),
+        new IconColor(0xFFB900),
+        new IconColor(0xFFFF00),
+        new IconColor(0xFFFFFF),
+        new IconColor(0xAFAFAF),
+        new IconColor(0x5A5A5A),
+        new IconColor(0x000000),
+        new IconColor(0x7D7D00),
+        new IconColor(0x649600),
+        new IconColor(0x4BAF00),
+        new IconColor(0x009600),
+        new IconColor(0x00AF4B),
+        new IconColor(0x009664),
+        new IconColor(0x007D7D),
+        new IconColor(0x006496),
+        new IconColor(0x004BAF),
+        new IconColor(0x000096),
+        new IconColor(0x4B00AF),
+        new IconColor(0x640096),
+        new IconColor(0x7D007D),
+        new IconColor(0x960064),
+        new IconColor(0x960000),
+        new IconColor(0x963200),
+        new IconColor(0xAF4B00),
+        new IconColor(0x966400),
+        new IconColor(0xFF7D7D),
+        new IconColor(0x7DFFAF),
+        new IconColor(0x7D7DFF),
+        new IconColor(new Color(1f, 0.7129f, 0f)) // not a gd color but the default primary color in 3dash
+    };
+
+    private static readonly GUILayoutOption[] iconColorsLayoutOptions = { GUILayout.ExpandWidth(false) };
+
     private bool _extended;
 
     private readonly HashSet<Material> _primaryMaterials = new();
@@ -78,7 +163,8 @@ public class Icon : ConfigurablePatch {
                 new ConfigDescription(extended ? $"Requires {extKey} on" : "", null,
                     new ConfigurationManagerAttributes {
                         Order = order--,
-                        IsAdvanced = advanced
+                        IsAdvanced = advanced,
+                        CustomDrawer = IconColorDrawer
                     }));
             entry.SettingChanged += (_, _) => update(entry);
             return entry;
@@ -284,5 +370,22 @@ public class Icon : ConfigurablePatch {
         foreach(Outline outline in outlines)
             if(outline)
                 outline.OutlineColor = color;
+    }
+
+    private static void IconColorDrawer(ConfigEntryBase entry) {
+        GUILayout.BeginVertical();
+        const int colorsPerRow = 14;
+        for(int i = 0; i < iconColors.Count; i += colorsPerRow) {
+            GUILayout.BeginHorizontal();
+            for(int j = i; j < Math.Min(i + colorsPerRow, iconColors.Count); j++) {
+                IconColor color = iconColors[j];
+                Texture texture = entry.BoxedValue.Equals(color.boxedColor) ? color.selectedTexture : color.texture;
+                if(GUILayout.Button(texture, GUI.skin.label, iconColorsLayoutOptions))
+                    entry.BoxedValue = color.boxedColor;
+            }
+            GUILayout.EndHorizontal();
+        }
+        GUILayout.EndVertical();
+        GUILayout.FlexibleSpace();
     }
 }
