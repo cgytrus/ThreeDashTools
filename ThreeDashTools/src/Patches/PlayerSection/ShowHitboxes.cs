@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 using SixDash.API;
 using SixDash.Patches;
 
@@ -9,7 +11,7 @@ using Gizmos = Popcron.Gizmos;
 
 namespace ThreeDashTools.Patches.PlayerSection;
 
-// ReSharper disable once ClassNeverInstantiated.Global
+[UsedImplicitly]
 public class ShowHitboxes : ConfigurablePatch {
     public ShowHitboxes() : base(Plugin.instance!.Config, "Player", nameof(ShowHitboxes), false, "") => instance = this;
 

@@ -1,10 +1,12 @@
-﻿using SixDash.Patches;
+﻿using JetBrains.Annotations;
+
+using SixDash.Patches;
 
 using UnityEngine;
 
 namespace ThreeDashTools.Patches.MetaSection;
 
-// ReSharper disable once UnusedType.Global
+[UsedImplicitly]
 public class SaveSettings : ConfigurablePatch {
     public SaveSettings() : base(Plugin.instance!.Config, "Meta", nameof(SaveSettings), false,
         "Saves settings set in the pause menu") { }

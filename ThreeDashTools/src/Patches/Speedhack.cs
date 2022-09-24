@@ -87,7 +87,7 @@ public class Speedhack : IPatch {
             UpdateSpeed();
         };
 
-        Player.playerSpawn += self => {
+        Player.spawn += self => {
             if(!_deathFx) {
                 _deathFx = self.DeathFX;
                 AddAudioSources(_deathFx.GetComponentsInChildren<AudioSource?>(true));

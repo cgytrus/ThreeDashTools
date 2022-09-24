@@ -9,7 +9,7 @@ using ThreeDashTools.Patches.PlayerSection;
 namespace ThreeDashTools;
 
 [BepInPlugin("mod.cgytrus.plugins.3dashtools", PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-[BepInDependency("mod.cgytrus.plugins.sixdash", "0.3.0")]
+[BepInDependency("mod.cgytrus.plugins.sixdash", "0.4.0")]
 public class Plugin : BaseUnityPlugin {
     public static Plugin? instance { get; private set; }
 

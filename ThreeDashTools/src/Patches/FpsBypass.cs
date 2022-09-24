@@ -1,12 +1,14 @@
 ﻿using BepInEx.Configuration;
 
+using JetBrains.Annotations;
+
 using SixDash.Patches;
 
 using UnityEngine;
 
 namespace ThreeDashTools.Patches;
 
-// ReSharper disable once UnusedType.Global
+[UsedImplicitly]
 public class FpsBypass : IPatch {
     public FpsBypass() {
         ConfigFile config = Plugin.instance!.Config;

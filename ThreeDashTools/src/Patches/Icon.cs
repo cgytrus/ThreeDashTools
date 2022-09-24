@@ -220,7 +220,7 @@ public class Icon : ConfigurablePatch {
     }
 
     public override void Apply() {
-        Player.playerSpawn += self => {
+        Player.spawn += self => {
             if(!enabled)
                 return;
             _outlineOutlines.Clear();

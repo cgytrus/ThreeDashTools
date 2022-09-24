@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 
+using SixDash.API;
 using SixDash.Patches;
 
 using UnityEngine;
@@ -10,7 +11,6 @@ namespace ThreeDashTools.Patches.PlayerSection;
 // ReSharper disable once UnusedType.Global
 public class FirstPerson : ConfigurablePatch {
     private Transform? _block;
-    private PlayerScript? _player;
     private PathFollower? _pathFollower;
 
     public FirstPerson() : base(Plugin.instance!.Config, "Player", nameof(FirstPerson), false, "") { }
@@ -41,17 +41,17 @@ public class FirstPerson : ConfigurablePatch {
             camera.fieldOfView = 70f;
             camera.nearClipPlane = 0.01f;
 
-            if(!_block)
+            if(!Player.scriptInstance)
                 return;
-            _player = _block!.GetComponent<PlayerScript>();
-            DisableGraphicsObj(_player.shapes[0]); // cube
-            DisableGraphicsTrans(_player.shapes[1].transform.GetChild(1)); // ship
-            DisableGraphicsObj(_player.shapes[2]); // wave
-            DisableGraphicsObj(_player.shapes[3]); // hedron
-            DisableGraphicsTrans(_player.shapes[4].transform.GetChild(0)); // ufo
+            DisableGraphicsObj(Player.scriptInstance!.shapes[0]); // cube
+            DisableGraphicsTrans(Player.scriptInstance.shapes[1].transform.GetChild(1)); // ship
+            DisableGraphicsObj(Player.scriptInstance.shapes[2]); // wave
+            DisableGraphicsObj(Player.scriptInstance.shapes[3]); // hedron
+            DisableGraphicsTrans(Player.scriptInstance.shapes[4].transform.GetChild(0)); // ufo
 
             // reverse ufo dome triangles so that the dome renders on the inside instead of the outside
-            Mesh ufoDome = _player.shapes[4].transform.Find("UFO").Find("Sphere.002").GetComponent<MeshFilter>().mesh;
+            Mesh ufoDome = Player.scriptInstance.shapes[4].transform.Find("UFO").Find("Sphere.002")
+                .GetComponent<MeshFilter>().mesh;
             ufoDome.triangles = ufoDome.triangles.Reverse().ToArray();
 
             static void DisableGraphicsObj(GameObject obj) {
@@ -71,7 +71,7 @@ public class FirstPerson : ConfigurablePatch {
             Transform transform = self.transform;
             transform.position = _block!.position;
             Vector3 cameraOffset = new(0f, 0.45f, 0f);
-            if(_player!.gravDirections[_player.gravDirection].y < 0f)
+            if(Player.scriptInstance!.gravDirections[Player.scriptInstance.gravDirection].y < 0f)
                 cameraOffset.y = -cameraOffset.y;
             transform.GetChild(0).localPosition = cameraOffset;
 

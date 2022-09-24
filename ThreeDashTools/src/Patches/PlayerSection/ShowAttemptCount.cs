@@ -27,7 +27,7 @@ public class ShowAttemptCount : ConfigurablePatch {
             _attemptCount = 0;
         };
 
-        Player.playerSpawn += self => {
+        Player.spawn += self => {
             _attemptCount++;
 
             if(!enabled) {

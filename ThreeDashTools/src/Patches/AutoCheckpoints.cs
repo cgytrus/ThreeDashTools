@@ -20,7 +20,7 @@ public class AutoCheckpoints : ConfigurablePatch {
 
     private float _lastCheckpointPlaceAttemptTime = Time.time;
 
-    private GameObject? _pendingCheckpoint;
+    private CheckpointScript? _pendingCheckpoint;
 
     private bool _timeout;
     private float _timeoutStart;
@@ -36,13 +36,17 @@ public class AutoCheckpoints : ConfigurablePatch {
     }
 
     public override void Apply() {
-        Player.playerSpawn += _ => {
+        Player.spawn += _ => {
             _lastCheckpointPlaceAttemptTime = Time.time;
             _timeout = false;
             _forceOnGround = true;
         };
 
-        Player.playerDeath += DeleteCheckpointOnDeath;
+        Player.death += _ => {
+            if(!_timeout)
+                return;
+            Checkpoint.RemoveLatest();
+        };
 
         On.PlayerScript.SetCubeShape += (orig, self, shapeIndex) => {
             orig(self, shapeIndex);
@@ -75,14 +79,6 @@ public class AutoCheckpoints : ConfigurablePatch {
         UpdateCheckpointTest(self, isFlying, jumped, landed);
     }
 
-    private void DeleteCheckpointOnDeath(PlayerScript self) {
-        if(!_timeout)
-            return;
-        PauseMenuManager? pauseMenuManager = Object.FindObjectOfType<PauseMenuManager>();
-        if(pauseMenuManager)
-            pauseMenuManager.DeleteCheckpoint();
-    }
-
     private void UpdateCheckpointTest(PlayerScript player, bool isFlying, bool jumped, bool landed) {
         if(landed)
             TryPlaceCheckpoint(player, isFlying, jumped, landed);
@@ -100,33 +96,29 @@ public class AutoCheckpoints : ConfigurablePatch {
         if(!isFlying && !jumped && !landed)
             return;
 
-        GameObject? checkpointObj = PlayerScript.GetRecentCheckpoint();
-        CheckpointScript? lastCheckpoint = checkpointObj ? checkpointObj.GetComponent<CheckpointScript>() : null;
+        CheckpointScript? lastCheckpoint = Checkpoint.GetLatest();
         if(lastCheckpoint && !_quickCheckpointMode && !FarEnoughToPlace(player.speed, lastCheckpoint!))
             return;
 
         if(isFlying)
-            PlaceFlyingCheckpoint(player);
+            PlaceFlyingCheckpoint();
         else
-            PlaceNormalCheckpoint(player);
+            PlaceNormalCheckpoint();
     }
 
-    private void PlaceNormalCheckpoint(PlayerScript player) {
+    private void PlaceNormalCheckpoint() {
         _timeout = true;
         _timeoutStart = Time.time;
-        player.MakeCheckpoint();
+        Checkpoint.Mark();
     }
 
-    private void PlaceFlyingCheckpoint(PlayerScript player) {
+    private void PlaceFlyingCheckpoint() {
         if(_pendingCheckpoint) {
-            _pendingCheckpoint!.SetActive(true);
+            _pendingCheckpoint!.Store();
             _pendingCheckpoint = null;
         }
-        else {
-            player.MakeCheckpoint();
-            _pendingCheckpoint = PlayerScript.GetRecentCheckpoint();
-            _pendingCheckpoint.SetActive(false);
-        }
+        else
+            _pendingCheckpoint = Checkpoint.Create();
     }
 
     private bool FarEnoughToPlace(float speed, CheckpointScript checkpoint) =>

@@ -15,7 +15,6 @@ namespace ThreeDashTools.Patches.PlayerSection;
 public class NoDeathEffect : IPatch {
     private readonly ConfigEntry<bool> _entry;
     private readonly List<GameObject> _savedObjects = new();
-    private PlayerScript? _player;
 
     public NoDeathEffect() {
         ConfigFile config = Plugin.instance!.Config;
@@ -24,8 +23,7 @@ public class NoDeathEffect : IPatch {
     }
 
     public void Apply() {
-        Player.playerSpawn += self => {
-            _player = self;
+        Player.spawn += _ => {
             ToggleDeathFxParticles(!_entry.Value);
             // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach(GameObject obj in _savedObjects)
@@ -34,7 +32,7 @@ public class NoDeathEffect : IPatch {
             _savedObjects.Clear();
         };
 
-        Player.playerDeath += self => {
+        Player.death += self => {
             if(!_entry.Value)
                 return;
 
@@ -46,10 +44,11 @@ public class NoDeathEffect : IPatch {
         };
     }
 
-    private void ToggleDeathFxParticles(bool enabled) {
-        if(!_player)
+    private static void ToggleDeathFxParticles(bool enabled) {
+        if(!Player.scriptInstance)
             return;
-        foreach(ParticleSystemRenderer renderer in _player!.DeathFX.GetComponentsInChildren<ParticleSystemRenderer>())
+        foreach(ParticleSystemRenderer renderer in Player.scriptInstance!.DeathFX
+            .GetComponentsInChildren<ParticleSystemRenderer>())
             renderer.enabled = enabled;
     }
 }

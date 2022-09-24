@@ -2,6 +2,8 @@
 
 using BepInEx.Configuration;
 
+using JetBrains.Annotations;
+
 using PathCreation;
 
 using SixDash.API;
@@ -13,7 +15,7 @@ using Gizmos = Popcron.Gizmos;
 
 namespace ThreeDashTools.Patches;
 
-// ReSharper disable once UnusedType.Global
+[UsedImplicitly]
 public class AutoMusicSync : IPatch {
     private enum Mode { None, SyncToMusicTime, SyncToPlayerPosition, SyncToLevelTime }
 
@@ -75,7 +77,7 @@ public class AutoMusicSync : IPatch {
             orig(self);
         };
 
-        Player.playerSpawn += _ => {
+        Player.spawn += _ => {
             _levelStartTime = Time.time;
             ForceSyncAll(null);
         };

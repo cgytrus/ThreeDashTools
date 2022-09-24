@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace ThreeDashTools.Patches;
 
-// ReSharper disable once ClassNeverInstantiated.Global
+[PublicAPI]
 public class WindowSettings : IPatch {
     [PublicAPI, Serializable]
     private struct EquatableResolution : IEquatable<EquatableResolution>, IEquatable<Resolution> {
