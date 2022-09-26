@@ -25,8 +25,6 @@ public class Speedhack : IPatch {
     private GameObject? _deathFx;
     private readonly float _initialFixedDeltaTime;
 
-    private static readonly GUILayoutOption[] sliderLayoutOptions = { GUILayout.ExpandWidth(true) };
-
     public Speedhack() {
         ConfigFile config = Plugin.instance!.Config;
 
@@ -35,7 +33,7 @@ public class Speedhack : IPatch {
 
         _speed = config.Bind(nameof(Speedhack), "Speed", 1f,
             new ConfigDescription("", new AcceptableValueRange<float>(0f, 10f), new ConfigurationManagerAttributes {
-                CustomDrawer = SliderDrawer
+                CustomDrawer = GuiUtil.SliderDrawer(0f, 3f)
             }));
         _speed.SettingChanged += (_, _) => { UpdateSpeed(); };
 
@@ -46,19 +44,6 @@ public class Speedhack : IPatch {
         _affectPhysics.SettingChanged += (_, _) => { UpdateSpeed(); };
 
         _initialFixedDeltaTime = Time.fixedDeltaTime;
-
-        void SliderDrawer(ConfigEntryBase _) {
-            if(_speed is null)
-                return;
-
-            float sliderValue = GUILayout.HorizontalSlider(_speed.Value, 0f, 3f, sliderLayoutOptions);
-            if(sliderValue != _speed.Value)
-                _speed.Value = sliderValue;
-
-            if(float.TryParse(GUILayout.TextField(_speed.Value.ToString("F2", CultureInfo.InvariantCulture)),
-                    NumberStyles.Any, CultureInfo.InvariantCulture, out float value) && value != _speed.Value)
-                _speed.Value = value;
-        }
     }
 
     public void Apply() {
