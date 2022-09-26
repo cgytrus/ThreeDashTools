@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>ThreeDashTools</AssemblyName>
     <Version>0.3.0</Version>
     <Company>https://github.com/cgytrus/ThreeDashTools</Company>
@@ -11,14 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-    <PackageReference Include="BepInEx.Core" Version="5.*" />
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
+    <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" />
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.6" IncludeAssets="compile" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,7 +8,7 @@ using ThreeDashTools.Patches.PlayerSection;
 
 namespace ThreeDashTools;
 
-[BepInPlugin("mod.cgytrus.plugins.3dashtools", PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+[BepInPlugin("mod.cgytrus.plugins.3dashtools", MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInDependency("mod.cgytrus.plugins.sixdash", "0.4.0")]
 public class Plugin : BaseUnityPlugin {
     public static Plugin? instance { get; private set; }
@@ -23,7 +23,7 @@ public class Plugin : BaseUnityPlugin {
         Util.ApplyAllPatches();
 
         Logger.LogInfo("Initializing UI");
-        UI.AddVersionText($"3DashTools v{PluginInfo.PLUGIN_VERSION}");
+        UI.AddVersionText($"3DashTools v{MyPluginInfo.PLUGIN_VERSION}");
     }
 
     private void Update() => ShowHitboxes.instance?.Update();
