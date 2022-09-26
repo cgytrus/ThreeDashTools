@@ -16,15 +16,39 @@ namespace ThreeDashTools.Patches;
 public class FirstPerson : ConfigurablePatch {
     private Transform? _block;
     private float _sensitivity;
+    private readonly float[] _cameraOffsets = new float[5];
 
     public FirstPerson() : base(Plugin.instance!.Config, nameof(FirstPerson), "Enabled", false, "") {
         ConfigFile config = Plugin.instance.Config;
 
+        int order = -1;
+
         ConfigEntry<float> sensitivity = config.Bind(nameof(FirstPerson), "Sensitivity", 1f, new ConfigDescription("",
             new AcceptableValueRange<float>(0f, 10f),
-            new ConfigurationManagerAttributes { CustomDrawer = GuiUtil.SliderDrawer(0.05f, 5f) }));
+            new ConfigurationManagerAttributes {
+                Order = order--,
+                CustomDrawer = GuiUtil.SliderDrawer(0.05f, 5f)
+            }));
         _sensitivity = sensitivity.Value;
         sensitivity.SettingChanged += (_, _) => { _sensitivity = sensitivity.Value; };
+
+        void AddCameraOffsetConfig(string mode, int modeIndex, float defaultValue) {
+            ConfigEntry<float> entry = config.Bind(nameof(FirstPerson), $"{mode}CameraOffset", defaultValue,
+                new ConfigDescription("", new AcceptableValueRange<float>(-1f, 1f),
+                    new ConfigurationManagerAttributes {
+                        Order = order--,
+                        IsAdvanced = true,
+                        CustomDrawer = GuiUtil.SliderDrawer(-1f, 1f)
+                    }));
+            _cameraOffsets[modeIndex] = entry.Value;
+            entry.SettingChanged += (_, _) => { _cameraOffsets[modeIndex] = entry.Value; };
+        }
+
+        AddCameraOffsetConfig("Cube", 0, 0.45f);
+        AddCameraOffsetConfig("Ship", 1, 0.45f);
+        AddCameraOffsetConfig("Wave", 2, 0f);
+        AddCameraOffsetConfig("Hedron", 3, 0f);
+        AddCameraOffsetConfig("Ufo", 4, 0.45f);
     }
 
     public override void Apply() {
@@ -53,10 +77,10 @@ public class FirstPerson : ConfigurablePatch {
             Transform transform = self.transform;
             transform.position = _block!.position;
 
-            Vector3 cameraOffset = new(0f, 0.45f, 0f);
-            if(Player.scriptInstance!.gravDirections[Player.scriptInstance.gravDirection].y < 0f)
-                cameraOffset.y = -cameraOffset.y;
-            transform.GetChild(0).localPosition = cameraOffset;
+            float cameraOffset = _cameraOffsets[Player.scriptInstance!.GetCubeShape()];
+            Vector3 gravDir = Player.scriptInstance.gravDirections[Player.scriptInstance.gravDirection];
+            transform.GetChild(0).localPosition = new Vector3(cameraOffset * gravDir.z, cameraOffset * gravDir.y,
+                cameraOffset * gravDir.x);
 
             Vector3 cameraRotation = transform.localEulerAngles;
             cameraRotation.z = 0f;
