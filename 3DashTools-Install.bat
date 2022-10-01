@@ -63,11 +63,7 @@ if %errorLevel% == 0 (
 )
 :begin_main
 cls
-set current_time=%time:~0,5%
-if /i "%current_time%" GEQ " 5:00" if /i "%current_time%" LSS "13:00" echo Good morning %username%! Welcome to the 3DashTools Installer.
-if /i "%current_time%" GEQ "13:00" if /i "%current_time%" LSS "18:00" echo Good afternoon %username%! Welcome to the 3DashTools Installer.
-if /i "%current_time%" GEQ "18:00" if /i "%current_time%" LEQ "23:59" echo Good evening %username%! Welcome to the 3DashTools Installer.
-if /i "%current_time%" GEQ " 0:00" if /i "%current_time%" LSS " 5:00" echo Good morning %username%? Welcome to the 3DashTools Installer.
+echo Welcome to the 3DashTools Installer.
 goto install_1
 
 
@@ -129,12 +125,7 @@ if "%progress%"=="9" goto end
 goto install_5
 :end
 cls
-echo Thanks for using 3DashTools Installer!
-echo Have fun with 3DashTools!
+echo The installer is ready
 echo.
-echo Feel free to close this window.
-echo.
-echo Press any key to open 3Dash.
-pause >nul
-3Dash.exe
+pause
 exit
