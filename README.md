@@ -1,7 +1,7 @@
 ﻿# 3DashTools
 A mod menu for [3Dash](https://delugedrop.itch.io/3dash)
 
-[Русский](README-ru.md)
+[Русский](README-ru.md) [Suomeksi](README-fi.md)
 
 ## Features
 - Practice Music
