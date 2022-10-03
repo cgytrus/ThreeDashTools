@@ -211,6 +211,16 @@ public class Icon : ConfigurablePatch {
 
     public static void LoadAssets() {
         foreach(string iconAssetBundle in Directory.EnumerateFiles(iconsPath)) {
+            if(!iconAssetBundle.EndsWith(Application.platform switch {
+                    RuntimePlatform.WindowsEditor or RuntimePlatform.WindowsPlayer or RuntimePlatform.WindowsServer =>
+                        "StandaloneWindows64",
+                    RuntimePlatform.LinuxEditor or RuntimePlatform.LinuxPlayer or RuntimePlatform.LinuxServer =>
+                        "StandaloneLinux64",
+                    RuntimePlatform.OSXEditor or RuntimePlatform.OSXPlayer or RuntimePlatform.OSXServer =>
+                        "StandaloneOSX",
+                    _ => "Unknown"
+                }, StringComparison.Ordinal))
+                continue;
             AssetBundle bundle = AssetBundle.LoadFromFile(iconAssetBundle);
             GameObject[] objects = bundle.LoadAllAssets<GameObject>();
             foreach(GameObject obj in objects)
