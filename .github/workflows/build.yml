@@ -81,7 +81,7 @@ jobs:
       - name: Prepare artifact
         id: prepare-artifact
         run: |
-          mkdir -p artifact/3Dash_Data/StreamingAssets
+          mkdir -p artifact/3Dash_Data/StreamingAssets/Icons
           sudo mv ./AssetBundles/${{ matrix.targetPlatform }}/icons ./artifact/3Dash_Data/StreamingAssets/Icons/icons-${{ matrix.targetPlatform }}
           echo "::set-output name=artifact_name::ThreeDashTools-$(git rev-parse --short HEAD)"
       - name: Upload artifact
