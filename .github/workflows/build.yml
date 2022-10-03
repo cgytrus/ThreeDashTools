@@ -38,7 +38,6 @@ jobs:
         run: |
           mkdir -p artifact/BepInEx/plugins
           cp ./ThreeDashTools/bin/Release/netstandard2.1/ThreeDashTools.dll ./artifact/BepInEx/plugins
-#          cp ./ThreeDashTools.Patcher/bin/Release/net35/ThreeDashTools.Patcher.dll ./artifact/BepInEx/patchers
           echo "::set-output name=artifact_name::ThreeDashTools-$(git rev-parse --short HEAD)"
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.0
