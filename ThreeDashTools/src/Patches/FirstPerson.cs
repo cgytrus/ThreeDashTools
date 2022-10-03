@@ -69,10 +69,13 @@ public class FirstPerson : ConfigurablePatch {
         };
 
         On.BoomArm.Update += (orig, self) => {
-            orig(self);
-            if(!enabled)
+            if(!enabled) {
+                orig(self);
                 return;
+            }
+
             self.spd = 0.03f * _sensitivity;
+            orig(self);
 
             Transform transform = self.transform;
             transform.position = _block!.position;
