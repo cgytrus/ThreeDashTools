@@ -242,7 +242,7 @@ resharper_web_config_module_not_resolved_highlighting=warning
 resharper_web_config_type_not_resolved_highlighting=warning
 resharper_web_config_wrong_module_highlighting=warning
 
-[{*.csproj,*.vcxproj}]
+[{*.csproj,*.vcxproj,*.yaml,*.yml}]
 indent_size=2
 
 [*.txt]

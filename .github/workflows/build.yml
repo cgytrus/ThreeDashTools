@@ -1,0 +1,92 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    outputs:
+      artifact_name:
+        value: ${{ jobs.build-mod.outputs.artifact_name }}
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - '**'
+      - '!main'
+
+jobs:
+  build-mod:
+    name: Build Mod
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ steps.prepare-artifact.outputs.artifact_name }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Prepare artifact
+        id: prepare-artifact
+        run: |
+          mkdir -p artifact/BepInEx/plugins
+          cp ./ThreeDashTools/bin/Release/netstandard2.1/ThreeDashTools.dll ./artifact/BepInEx/plugins
+#          cp ./ThreeDashTools.Patcher/bin/Release/net35/ThreeDashTools.Patcher.dll ./artifact/BepInEx/patchers
+          echo "::set-output name=artifact_name::ThreeDashTools-$(git rev-parse --short HEAD)"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: ${{ steps.prepare-artifact.outputs.artifact_name }}
+          path: artifact
+
+  build-assets:
+    name: Build Assets
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows64
+          - StandaloneOSX
+    steps:
+      - uses: actions/checkout@v3
+      - run: cd ThreeDashTools.Assets
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/ThreeDashTools.Assets/Library
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
+
+      - name: Build AssetBundle
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: ThreeDashTools.Assets
+          unityVersion: 2021.3.6f1
+          buildMethod: BuildScript.Build
+          targetPlatform: ${{ matrix.targetPlatform }}
+          buildsPath: AssetBundles
+          versioning: None
+
+      - name: Prepare artifact
+        id: prepare-artifact
+        run: |
+          mkdir -p artifact/3Dash_Data/StreamingAssets
+          sudo mv ./AssetBundles/${{ matrix.targetPlatform }}/icons ./artifact/3Dash_Data/StreamingAssets/icons-${{ matrix.targetPlatform }}
+          echo "::set-output name=artifact_name::ThreeDashTools-$(git rev-parse --short HEAD)"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: ${{ steps.prepare-artifact.outputs.artifact_name }}
+          path: artifact

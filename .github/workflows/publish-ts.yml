@@ -1,0 +1,46 @@
+name: Publish Thunderstore package
+
+on:
+  workflow_dispatch:
+  release:
+    types: [ released ]
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare meta
+        run: |
+          rm -f README.md icon.png
+          mkdir ./release
+          cp ./meta/* ./release
+
+      - id: get-version
+        run: |
+          version=$(echo $GITHUB_REF_NAME | cut -c 2-)
+          echo "::set-output name=version::$version"
+
+      - name: Download release
+        uses: robinraju/release-downloader@v1.5
+        with:
+          tag: ${{ github.ref_name }}
+          fileName: ThreeDashTools-${{ steps.get-version.outputs.version }}.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: unzip ThreeDashTools-${{ steps.get-version.outputs.version }}.zip -d ./release
+
+      - name: Publish package
+        uses: GreenTF/upload-thunderstore-package@v2.2
+        with:
+          path: ./release
+          community: 3dash
+          namespace: ConfiG
+          name: 3DashTools
+          description: A mod menu
+          version: ${{ steps.get-version.outputs.version }}
+          categories: Libraries Mods Tools
+          deps: ConfiG-6Dash@0.4.0
+          token: ${{ secrets.THUNDERSTORE_TOKEN }}
