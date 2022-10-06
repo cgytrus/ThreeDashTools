@@ -22,11 +22,6 @@ public class ShowAttemptCount : ConfigurablePatch {
     public ShowAttemptCount() : base(Plugin.instance!.Config, "Player", nameof(ShowAttemptCount), false, "") { }
 
     public override void Apply() {
-        World.levelLoading += () => {
-            _texts.Clear();
-            _attemptCount = 0;
-        };
-
         Player.spawn += self => {
             _attemptCount++;
 
@@ -40,6 +35,11 @@ public class ShowAttemptCount : ConfigurablePatch {
             UpdateTexts(self.transform);
         };
 
+        World.levelUnload += () => {
+            _texts.Clear();
+            _attemptCount = 0;
+        };
+
         World.levelUpdate += (renderMin, renderMax) => {
             if(!enabled)
                 return;
@@ -50,10 +50,18 @@ public class ShowAttemptCount : ConfigurablePatch {
     }
 
     private void UpdateTexts(Transform transform) {
-        if(_texts.Count <= 0) {
-            _texts.Add(CreateText());
-            _texts.Add(CreateText());
+        // failsafe
+        for(int i = _texts.Count - 1; i >= 0; i--) {
+            Transform trans = _texts[i].Item2;
+            if(_texts[i].Item1 && trans)
+                continue;
+            if(trans && trans.gameObject)
+                Object.Destroy(trans.gameObject);
+            _texts.RemoveAt(i);
         }
+
+        while(_texts.Count < 2)
+            _texts.Add(CreateText());
 
         _distance = PathFollower.distanceTravelled;
         _outAnimationEnd = World.TimeToDistance(World.DistanceToTime(_distance) + Chunk.OutAnimTime);
@@ -69,7 +77,7 @@ public class ShowAttemptCount : ConfigurablePatch {
         }
     }
 
-    private (TMP_Text, Transform) CreateText() {
+    private static (TMP_Text, Transform) CreateText() {
         GameObject obj = new("Attempt count");
         obj.AddComponent<MeshRenderer>();
 
