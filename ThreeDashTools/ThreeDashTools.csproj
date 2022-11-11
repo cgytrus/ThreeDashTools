@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>ThreeDashTools</AssemblyName>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <Company>https://github.com/cgytrus/ThreeDashTools</Company>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>10.0</LangVersion>

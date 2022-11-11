@@ -42,5 +42,5 @@ jobs:
           description: A mod menu
           version: ${{ steps.get-version.outputs.version }}
           categories: Libraries Mods Tools
-          deps: ConfiG-6Dash@0.4.0
+          deps: ConfiG-6Dash@0.4.1
           token: ${{ secrets.THUNDERSTORE_TOKEN }}
