@@ -14,6 +14,9 @@ A mod menu
 
 ## Changelog
 
+#### 0.3.1
+* fixed ShowAttemptCount breaking playtesting
+
 #### 0.3.0
 * added no death effect
 * added speedhack
